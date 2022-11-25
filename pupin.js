@@ -2,7 +2,7 @@
 var blockSize = 25;
 var rows = 20;
 var columns = 20;
-var board;
+
 var context;
 // var dick;
 //pupin head
@@ -38,34 +38,44 @@ window.onload = async function () {
   const dick = await loadImage('./dick.png');
   console.log(dick);
 
-  board = document.getElementById("board");
-  board.height = rows * blockSize;
-  board.width = columns * blockSize;
-  context = board.getContext("2d");
+  const board = document.getElementById("board");
+  drawBoard(board);
+
+  const context = board.getContext("2d");
+  resetContext(context);
 
   document.addEventListener("keyup", changeDirection);
   setInterval(() => {
-    update(dick)
+    update(context, dick)
   }, 1000 / 10);
 };
 
-function drawDick(dick, x, y) {
+function drawBoard(board) {
+  board.height = rows * blockSize;
+  board.width = columns * blockSize;
+}
+
+function resetContext(context) {
+  context.fillStyle = "black";
+  context.fillRect(0, 0, board.width, board.height);
+}
+
+function drawDick(context, dick, x, y) {
   context.drawImage(dick, x, y, blockSize, blockSize);
 }
 
-function update(dick) {
+function update(context, dick) {
+  if (gameOver) {
+    return;
+  }
 
   if (dickX == undefined && dickY == undefined) {
     [dickX, dickY] = placeDick()
   }
 
-  if (gameOver) {
-    return;
-  }
-  context.fillStyle = "black";
-  context.fillRect(0, 0, board.width, board.height);
+  resetContext(context);
   
-  drawDick(dick, dickX, dickY);
+  drawDick(context, dick, dickX, dickY);
 
   if (pupinX == dickX && pupinY == dickY) {
     pupinBody.push([dickX, dickY]);
