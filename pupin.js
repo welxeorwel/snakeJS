@@ -46,7 +46,7 @@ window.onload = async function () {
   document.addEventListener("keyup", changeDirection);
   setInterval(() => {
     update(context, dick)
-  }, 1000 / 10);
+  }, 2000 / 10);
 };
 
 function drawBoard(board) {
@@ -76,6 +76,33 @@ function drawBody(context) {
   }
 }
 
+function moveBodyForward() {
+  if (pupinBody.length) {
+    pupinBody[0] = [pupinX, pupinY];
+  }
+  
+  for (let i = pupinBody.length - 1; i > 0; i--) {
+    pupinBody[i] = pupinBody[i - 1];
+  }
+}
+
+function checkBodyCollision() {
+  for (let i = 0; i < pupinBody.length; i++) {
+    if (pupinX == pupinBody[i][0] && pupinY==pupinBody[i][1]) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+function checkWallsCollision() {
+  return pupinX < 0 ||
+    pupinX > columns * blockSize ||
+    pupinY < 0 ||
+    pupinY > rows * blockSize;
+}
+
 function update(context, dick) {
   if (gameOver) {
     return;
@@ -94,34 +121,16 @@ function update(context, dick) {
     [dickX, dickY] = placeDick();
   }
 
-  for (let i = pupinBody.length - 1; i > 0; i--) {
-    pupinBody[i] = pupinBody[i - 1];
-  }
-
-  if (pupinBody.length) {
-    pupinBody[0] = [pupinX, pupinY];
-  }
-
+  moveBodyForward();
   drawHead(context);
-  drawBody(context);
+  drawBody(context);  
 
-  //game over
-  if (
-    pupinX < 0 ||
-    pupinX > columns * blockSize ||
-    pupinY < 0 ||
-    pupinY > rows * blockSize
-  ) {
+  if (checkWallsCollision() || checkBodyCollision()) {
     gameOver = true;
     alert("sosai");
   }
-  for (let i = 0; i < pupinBody.length; i++) {
-    if (pupinX == pupinBody[i][0] && pupinY==pupinBody[i][1]) {
-      gameOver = true;
-      alert("sosai");
-    }
-  }
 }
+
 function changeDirection(e) {
   if (e.code == "ArrowUp" && velocityY != 1) {
     velocityX = 0;
