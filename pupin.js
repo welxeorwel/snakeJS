@@ -4,7 +4,6 @@ var rows = 20;
 var columns = 20;
 
 var context;
-// var dick;
 //pupin head
 var pupinX = blockSize * 5; //start point
 var pupinY = blockSize * 5;
@@ -20,21 +19,23 @@ var dickY;
 
 function loadImage(src) {
   const imageLoaded = new Promise((resolve, reject) => {
-    const image = new Image(60, 45); // Using optional size for image
+    const image = new Image(100,75); // Using optional size for image
     image.onload = () => {
       resolve(image);
     }; // Draw when image has loaded
-    
+
     // Load an image of intrinsic size 300x227 in CSS pixels
     image.src = src;
-  })
+  });
 
   return imageLoaded;
 }
 
 async function startGame() {
-  const dick = await loadImage('./dick.png');
-
+  const dick = await loadImage("./dick.png");
+  const head1 = await loadImage("./pupin.png");
+  const head2 = await loadImage("./pupinOpen.png");
+  const flag = await loadImage("./flag.png");
   const board = document.getElementById("board");
   drawBoard(board);
 
@@ -43,8 +44,11 @@ async function startGame() {
 
   document.addEventListener("keyup", changeDirection);
 
+  let openMouth = false;
   const updateInterval = setInterval(() => {
-    const gameOver = update(context, dick);
+    openMouth = !openMouth;
+    const currentHead = openMouth ? head1 : head2;
+    const gameOver = update(context, dick, currentHead, flag);
     if (gameOver) {
       clearInterval(updateInterval);
       alert("sosai");
@@ -66,16 +70,22 @@ function drawDick(context, dick, x, y) {
   context.drawImage(dick, x, y, blockSize, blockSize);
 }
 
-function drawHead(context) {
-  context.fillStyle = "orange";
+function drawHead(context, head) {
+  context.fillStyle = "orange";//???
   pupinX += velocityX * blockSize;
   pupinY += velocityY * blockSize;
-  context.fillRect(pupinX, pupinY, blockSize, blockSize);
+  context.drawImage(head, pupinX, pupinY, blockSize, blockSize);
 }
 
-function drawBody(context) {
+function drawBody(context, flag) {
   for (let i = 0; i < pupinBody.length; i++) {
-    context.fillRect(pupinBody[i][0], pupinBody[i][1], blockSize, blockSize);
+    context.drawImage(
+      flag,
+      pupinBody[i][0],
+      pupinBody[i][1],
+      blockSize,
+      blockSize
+    );
   }
 }
 
@@ -83,7 +93,7 @@ function moveBodyForward() {
   if (pupinBody.length) {
     pupinBody[0] = [pupinX, pupinY];
   }
-  
+
   for (let i = pupinBody.length - 1; i > 0; i--) {
     pupinBody[i] = pupinBody[i - 1];
   }
@@ -91,7 +101,7 @@ function moveBodyForward() {
 
 function checkBodyCollision() {
   for (let i = 0; i < pupinBody.length; i++) {
-    if (pupinX == pupinBody[i][0] && pupinY==pupinBody[i][1]) {
+    if (pupinX == pupinBody[i][0] && pupinY == pupinBody[i][1]) {
       return true;
     }
   }
@@ -100,20 +110,22 @@ function checkBodyCollision() {
 }
 
 function checkWallsCollision() {
-  return pupinX < 0 ||
+  return (
+    pupinX < 0 ||
     pupinX > columns * blockSize ||
     pupinY < 0 ||
-    pupinY > rows * blockSize;
+    pupinY > rows * blockSize
+  );
 }
 
 // returns game over
-function update(context, dick) {
+function update(context, dick, head, flag) {
   if (dickX == undefined && dickY == undefined) {
-    [dickX, dickY] = placeDick()
+    [dickX, dickY] = placeDick();
   }
 
   resetContext(context);
-  
+
   drawDick(context, dick, dickX, dickY);
 
   if (pupinX == dickX && pupinY == dickY) {
@@ -122,8 +134,8 @@ function update(context, dick) {
   }
 
   moveBodyForward();
-  drawHead(context);
-  drawBody(context);  
+  drawHead(context, head);
+  drawBody(context, flag);
 
   if (checkWallsCollision() || checkBodyCollision()) {
     return true;
