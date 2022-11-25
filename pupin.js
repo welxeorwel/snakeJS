@@ -22,9 +22,7 @@ function loadImage(src) {
     const image = new Image(100,75); // Using optional size for image
     image.onload = () => {
       resolve(image);
-    }; // Draw when image has loaded
-
-    // Load an image of intrinsic size 300x227 in CSS pixels
+    }; 
     image.src = src;
   });
 
@@ -71,7 +69,7 @@ function drawDick(context, dick, x, y) {
 }
 
 function drawHead(context, head) {
-  context.fillStyle = "orange";//???
+  context.fillStyle = "orange";//??? dosent draw without this... idk why  
   pupinX += velocityX * blockSize;
   pupinY += velocityY * blockSize;
   context.drawImage(head, pupinX, pupinY, blockSize, blockSize);
@@ -118,7 +116,6 @@ function checkWallsCollision() {
   );
 }
 
-// returns game over
 function update(context, dick, head, flag) {
   if (dickX == undefined && dickY == undefined) {
     [dickX, dickY] = placeDick();
