@@ -36,7 +36,6 @@ function loadImage(src) {
 //field
 window.onload = async function () {
   const dick = await loadImage('./dick.png');
-  console.log(dick);
 
   const board = document.getElementById("board");
   drawBoard(board);
@@ -64,6 +63,19 @@ function drawDick(context, dick, x, y) {
   context.drawImage(dick, x, y, blockSize, blockSize);
 }
 
+function drawHead(context) {
+  context.fillStyle = "orange";
+  pupinX += velocityX * blockSize;
+  pupinY += velocityY * blockSize;
+  context.fillRect(pupinX, pupinY, blockSize, blockSize);
+}
+
+function drawBody(context) {
+  for (let i = 0; i < pupinBody.length; i++) {
+    context.fillRect(pupinBody[i][0], pupinBody[i][1], blockSize, blockSize);
+  }
+}
+
 function update(context, dick) {
   if (gameOver) {
     return;
@@ -81,20 +93,17 @@ function update(context, dick) {
     pupinBody.push([dickX, dickY]);
     [dickX, dickY] = placeDick();
   }
+
   for (let i = pupinBody.length - 1; i > 0; i--) {
     pupinBody[i] = pupinBody[i - 1];
   }
+
   if (pupinBody.length) {
     pupinBody[0] = [pupinX, pupinY];
   }
 
-  context.fillStyle = "orange";
-  pupinX += velocityX * blockSize;
-  pupinY += velocityY * blockSize;
-  context.fillRect(pupinX, pupinY, blockSize, blockSize);
-  for (let i = 0; i < pupinBody.length; i++) {
-    context.fillRect(pupinBody[i][0], pupinBody[i][1], blockSize, blockSize);
-  }
+  drawHead(context);
+  drawBody(context);
 
   //game over
   if (
