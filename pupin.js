@@ -13,7 +13,6 @@ var pupinBody = [];
 //velocity
 var velocityX = 0;
 var velocityY = 0;
-var gameOver = false;
 
 //dicks
 var dickX;
@@ -33,8 +32,7 @@ function loadImage(src) {
   return imageLoaded;
 }
 
-//field
-window.onload = async function () {
+async function startGame() {
   const dick = await loadImage('./dick.png');
 
   const board = document.getElementById("board");
@@ -44,10 +42,15 @@ window.onload = async function () {
   resetContext(context);
 
   document.addEventListener("keyup", changeDirection);
-  setInterval(() => {
-    update(context, dick)
+
+  const updateInterval = setInterval(() => {
+    const gameOver = update(context, dick);
+    if (gameOver) {
+      clearInterval(updateInterval);
+      alert("sosai");
+    }
   }, 2000 / 10);
-};
+}
 
 function drawBoard(board) {
   board.height = rows * blockSize;
@@ -103,11 +106,8 @@ function checkWallsCollision() {
     pupinY > rows * blockSize;
 }
 
+// returns game over
 function update(context, dick) {
-  if (gameOver) {
-    return;
-  }
-
   if (dickX == undefined && dickY == undefined) {
     [dickX, dickY] = placeDick()
   }
@@ -126,9 +126,10 @@ function update(context, dick) {
   drawBody(context);  
 
   if (checkWallsCollision() || checkBodyCollision()) {
-    gameOver = true;
-    alert("sosai");
+    return true;
   }
+
+  return false;
 }
 
 function changeDirection(e) {
