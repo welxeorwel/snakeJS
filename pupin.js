@@ -14,6 +14,7 @@ var pupinBody = [];
 var velocityX = 0;
 var velocityY = 0;
 var gameOver = false;
+
 //dicks
 var dickX;
 var dickY;
@@ -42,32 +43,33 @@ window.onload = async function () {
   board.width = columns * blockSize;
   context = board.getContext("2d");
 
-  placeDick();
   document.addEventListener("keyup", changeDirection);
   setInterval(() => {
     update(dick)
   }, 1000 / 10);
 };
 
-function drawDick(dick) {
-  // context.fillStyle = "green";
-  // context.fillRect(dickX, dickY, blockSize, blockSize);
-  context.drawImage(dick, dickX, dickY, blockSize, blockSize);
-
+function drawDick(dick, x, y) {
+  context.drawImage(dick, x, y, blockSize, blockSize);
 }
 
 function update(dick) {
+
+  if (dickX == undefined && dickY == undefined) {
+    [dickX, dickY] = placeDick()
+  }
+
   if (gameOver) {
     return;
   }
   context.fillStyle = "black";
   context.fillRect(0, 0, board.width, board.height);
   
-  drawDick(dick);
+  drawDick(dick, dickX, dickY);
 
   if (pupinX == dickX && pupinY == dickY) {
     pupinBody.push([dickX, dickY]);
-    placeDick();
+    [dickX, dickY] = placeDick();
   }
   for (let i = pupinBody.length - 1; i > 0; i--) {
     pupinBody[i] = pupinBody[i - 1];
@@ -116,7 +118,9 @@ function changeDirection(e) {
     velocityY = 0;
   }
 }
+
 function placeDick() {
-  dickX = Math.floor(Math.random() * columns) * blockSize;
-  dickY = Math.floor(Math.random() * rows) * blockSize;
+  const dickX = Math.floor(Math.random() * columns) * blockSize;
+  const dickY = Math.floor(Math.random() * rows) * blockSize;
+  return [dickX, dickY];
 }
