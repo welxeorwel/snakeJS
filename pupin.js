@@ -35,9 +35,6 @@ async function startGame() {
   const head2 = await loadImage("./pupinOpen.png");
   const flag = await loadImage("./flag.png");
   const board = document.getElementById("board");
-  // const endGameAnim1 = await loadImage("./pupinCry1.png");
-  // const endGameAnim2 = await loadImage("./pupinCry2.png");
-  // const endGameAnim3 = await loadImage("./pupinCry3.png");
   const endGameAnimations = await Promise.all([
     loadImage("./pupinCry1.png"),
     loadImage("./pupinCry2.png"),
@@ -71,12 +68,11 @@ async function startGame() {
 function drawRestart(context, endGameAnimations) {
   resetContext(context);
   endGameAnimation(context,endGameAnimations[tick%endGameAnimations.length]);
-  context.drawImage(endGameAnim1, rows / 2, columns / 2);
   // when u need to start, call updateInterval()
 }
 function endGameAnimation(context, endGameAnimation) {
-    context.drawImage(endGameAnimation, rows / 2, columns / 2);
-
+    context.drawImage(endGameAnimation,board.height/4,board.width/4);
+console.log()
 }
 function drawBoard(board) {
   board.height = rows * blockSize;
