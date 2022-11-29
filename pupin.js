@@ -1,28 +1,28 @@
 //board
-var blockSize = 25;
-var rows = 20;
-var columns = 20;
+let blockSize = 25;
+let rows = 20;
+let columns = 20;
 
-var context;
+let context;
 //pupin head
-var pupinX = blockSize * 5; //start point
-var pupinY = blockSize * 5;
+let pupinX = blockSize * 5; //start point
+let pupinY = blockSize * 5;
 //pupin body
-var pupinBody = [];
+let pupinBody = [];
 //velocity
-var velocityX = 0;
-var velocityY = 0;
+let velocityX = 0;
+let velocityY = 0;
 
 //dicks
-var dickX;
-var dickY;
-
+let dickX;
+let dickY;
+let tick = 0;
 function loadImage(src) {
   const imageLoaded = new Promise((resolve, reject) => {
-    const image = new Image(100,75); // Using optional size for image
+    const image = new Image(100, 75); // Using optional size for image
     image.onload = () => {
       resolve(image);
-    }; 
+    };
     image.src = src;
   });
 
@@ -35,6 +35,15 @@ async function startGame() {
   const head2 = await loadImage("./pupinOpen.png");
   const flag = await loadImage("./flag.png");
   const board = document.getElementById("board");
+  // const endGameAnim1 = await loadImage("./pupinCry1.png");
+  // const endGameAnim2 = await loadImage("./pupinCry2.png");
+  // const endGameAnim3 = await loadImage("./pupinCry3.png");
+  const endGameAnimations = await Promise.all([
+    loadImage("./pupinCry1.png"),
+    loadImage("./pupinCry2.png"),
+    loadImage("./pupinCry3.png"),
+  ]);
+
   drawBoard(board);
 
   const context = board.getContext("2d");
@@ -43,17 +52,32 @@ async function startGame() {
   document.addEventListener("keyup", changeDirection);
 
   let openMouth = false;
-  const updateInterval = setInterval(() => {
-    openMouth = !openMouth;
-    const currentHead = openMouth ? head1 : head2;
-    const gameOver = update(context, dick, currentHead, flag);
-    if (gameOver) {
-      clearInterval(updateInterval);
-      alert("sosai");
-    }
-  }, 2000 / 10);
+  const updateInterval = () => {
+    const currentInterval = setInterval(() => {
+      tick++;
+      openMouth = !openMouth;
+      const currentHead = openMouth ? head1 : head2;
+      const gameOver = update(context, dick, currentHead, flag);
+      if (gameOver) {
+        // clearInterval(currentInterval); // currentInterval
+        drawRestart(context, endGameAnimations);
+      }
+    }, 2000 / 10);
+  };
+
+  updateInterval();
 }
 
+function drawRestart(context, endGameAnimations) {
+  resetContext(context);
+  endGameAnimation(context,endGameAnimations[tick%endGameAnimations.length]);
+  context.drawImage(endGameAnim1, rows / 2, columns / 2);
+  // when u need to start, call updateInterval()
+}
+function endGameAnimation(context, endGameAnimation) {
+    context.drawImage(endGameAnimation, rows / 2, columns / 2);
+
+}
 function drawBoard(board) {
   board.height = rows * blockSize;
   board.width = columns * blockSize;
@@ -69,7 +93,7 @@ function drawDick(context, dick, x, y) {
 }
 
 function drawHead(context, head) {
-  context.fillStyle = "orange";//??? dosent draw without this... idk why  
+  context.fillStyle = "orange"; //??? dosent draw without this... idk why
   pupinX += velocityX * blockSize;
   pupinY += velocityY * blockSize;
   context.drawImage(head, pupinX, pupinY, blockSize, blockSize);
