@@ -1,9 +1,10 @@
+
 //board
 let blockSize = 25;
 let rows = 20;
 let columns = 20;
 
-let context;
+//export let context;
 //pupin head
 let pupinX = blockSize * 5; //start point
 let pupinY = blockSize * 5;
@@ -43,24 +44,25 @@ async function startGame() {
     loadImage("./pupinCry2.png"),
     loadImage("./pupinCry3.png"),
   ]);
-
+  
   drawBoard(board);
 
   const context = board.getContext("2d");
   resetContext(context);
 
   document.addEventListener("keyup", changeDirection);
-
+  let gameOver;
   let openMouth = false;
   const updateInterval = () => {
     const currentInterval = setInterval(() => {
       tick++;
-      openMouth = !openMouth;
-      const currentHead = openMouth ? head1 : head2;
-      const gameOver = update(context, dick, currentHead, flag);
       if (gameOver) {
         //clearInterval(currentInterval);
         drawRestart(context, endGameAnimations);
+      } else {
+        openMouth = !openMouth;
+        const currentHead = openMouth ? head1 : head2;
+        gameOver = update(context, dick, currentHead, flag);
       }
     }, 200);
   };
@@ -77,26 +79,24 @@ function drawRestart(context, endGameAnimations) {
 }
 function endGameAnimation(context, endGameAnimations) {
   context.drawImage(endGameAnimations, board.height / 4, board.width / 4);
- 
 }
-function endGameMessage(context){
+function endGameMessage(context) {
   context.fillStyle = "white";
   context.font = "15px sans-serif";
-  if(counter==1){
-  context.fillText(
-    "Putin ate just " + counter + " small sick dick! its not enouth!!",
-    board.height / 6,
-    board.width / 8  
-  );
-  }
-  else{
+  if (counter == 1) {
     context.fillText(
-    "Putin ate just " + counter + " small sick dicks! its not enouth!!",
-    board.height / 6,
-    board.width / 8
-);
+      "Putin ate just " + counter + " small sick dick! its not enouth!!",
+      board.height / 6,
+      board.width / 8
+    );
+  } else {
+    context.fillText(
+      "Putin ate just " + counter + " small sick dicks! its not enouth!!",
+      board.height / 6,
+      board.width / 8
+    );
   }
-} 
+}
 
 function drawBoard(board) {
   board.width = columns * blockSize;

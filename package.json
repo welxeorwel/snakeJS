@@ -1,0 +1,11 @@
+{
+  "name": "snakejs",
+  "version": "1.0.0",
+  "description": "this is simple JS game",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
