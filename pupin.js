@@ -90,7 +90,7 @@ function endGameMessage(context){
   );
   }
   else{
-context.fillText(
+    context.fillText(
     "sosai!! Putin ate just " + counter + " small sick dicks! its not enouth!!",
     board.height / 6,
     board.width / 8
