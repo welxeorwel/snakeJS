@@ -72,9 +72,7 @@ function drawRestart(context, endGameAnimations) {
   resetContext(context);
   endGameAnimation(context, endGameAnimations[tick % endGameAnimations.length]);
   endGameMessage(context);
-  // alert(
-  //   "sosai!! Putin ate just " + counter + " small sick dicks! its not enouth!!"
-  // );
+
   // when u need to start, call updateInterval()
 }
 function endGameAnimation(context, endGameAnimations) {
