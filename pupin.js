@@ -12,11 +12,14 @@ let pupinBody = [];
 //velocity
 let velocityX = 0;
 let velocityY = 0;
-
+//counter
+let counter = 0;
 //dicks
 let dickX;
 let dickY;
 let tick = 0;
+const restartButton = document.getElementById("restart");
+
 function loadImage(src) {
   const imageLoaded = new Promise((resolve, reject) => {
     const image = new Image(100, 75); // Using optional size for image
@@ -56,10 +59,10 @@ async function startGame() {
       const currentHead = openMouth ? head1 : head2;
       const gameOver = update(context, dick, currentHead, flag);
       if (gameOver) {
-        // clearInterval(currentInterval); // currentInterval
+        //clearInterval(currentInterval);
         drawRestart(context, endGameAnimations);
       }
-    }, 2000 / 10);
+    }, 200);
   };
 
   updateInterval();
@@ -67,16 +70,39 @@ async function startGame() {
 
 function drawRestart(context, endGameAnimations) {
   resetContext(context);
-  endGameAnimation(context,endGameAnimations[tick%endGameAnimations.length]);
+  endGameAnimation(context, endGameAnimations[tick % endGameAnimations.length]);
+  endGameMessage(context);
+  // alert(
+  //   "sosai!! Putin ate just " + counter + " small sick dicks! its not enouth!!"
+  // );
   // when u need to start, call updateInterval()
 }
-function endGameAnimation(context, endGameAnimation) {
-    context.drawImage(endGameAnimation,board.height/4,board.width/4);
-console.log()
+function endGameAnimation(context, endGameAnimations) {
+  context.drawImage(endGameAnimations, board.height / 4, board.width / 4);
+ 
 }
+function endGameMessage(context){
+  context.fillStyle = "white";
+  context.font = "15px sans-serif";
+  if(counter==1){
+  context.fillText(
+    "sosai!! Putin ate just " + counter + " small sick dick! its not enouth!!",
+    board.height / 6,
+    board.width / 8  
+  );
+  }
+  else{
+context.fillText(
+    "sosai!! Putin ate just " + counter + " small sick dicks! its not enouth!!",
+    board.height / 6,
+    board.width / 8
+);
+  }
+} 
+
 function drawBoard(board) {
-  board.height = rows * blockSize;
   board.width = columns * blockSize;
+  board.height = rows * blockSize;
 }
 
 function resetContext(context) {
@@ -148,6 +174,7 @@ function update(context, dick, head, flag) {
   if (pupinX == dickX && pupinY == dickY) {
     pupinBody.push([dickX, dickY]);
     [dickX, dickY] = placeDick();
+    counter++;
   }
 
   moveBodyForward();
