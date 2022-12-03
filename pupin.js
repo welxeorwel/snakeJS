@@ -1,10 +1,10 @@
-
+//import {gameOverScreen} from "./gameoverScreen.mjs";
 //board
 let blockSize = 25;
 let rows = 20;
 let columns = 20;
 
-//export let context;
+//let context;
 //pupin head
 let pupinX = blockSize * 5; //start point
 let pupinY = blockSize * 5;
@@ -15,10 +15,12 @@ let velocityX = 0;
 let velocityY = 0;
 //counter
 let counter = 0;
+
 //dicks
 let dickX;
 let dickY;
 let tick = 0;
+
 const restartButton = document.getElementById("restart");
 
 function loadImage(src) {
@@ -32,7 +34,6 @@ function loadImage(src) {
 
   return imageLoaded;
 }
-
 async function startGame() {
   const dick = await loadImage("./dick.png");
   const head1 = await loadImage("./pupin.png");
@@ -44,12 +45,12 @@ async function startGame() {
     loadImage("./pupinCry2.png"),
     loadImage("./pupinCry3.png"),
   ]);
-  
+
   drawBoard(board);
 
   const context = board.getContext("2d");
   resetContext(context);
-
+  const drawGGDicks = drawDicksFacory(board.width / 4, board.height / 8);
   document.addEventListener("keyup", changeDirection);
   let gameOver;
   let openMouth = false;
@@ -59,6 +60,7 @@ async function startGame() {
       if (gameOver) {
         //clearInterval(currentInterval);
         drawRestart(context, endGameAnimations);
+        drawGGDicks(counter, context, dick);
       } else {
         openMouth = !openMouth;
         const currentHead = openMouth ? head1 : head2;
@@ -69,7 +71,31 @@ async function startGame() {
 
   updateInterval();
 }
+function drawDicksFacory(xForDicksGG, yForDicksGG) {
+  let countOfDicks = 0;
+  return (maxDickCount, context, dick) => {
+    let amountOfDicks = countOfDicks++;
+    if (amountOfDicks > maxDickCount) {
+      amountOfDicks = maxDickCount;
+    }
+    for (i = 0; i < amountOfDicks; i++) {
+      drawDick(context, dick, xForDicksGG + blockSize * i, yForDicksGG);
+    }
+  };
+}
+function drawDicks(context, dick, xForDicksGG) {
+  if (countOfDicks == 0) {
+    return;
+  } else {
+    checkPaintedDickCount();
+  }
+  return drawDick(context, dick, xForDicksGG, board.width / 8);
 
+  // else{
+  //   countOfDicks--;
+  //
+  // }
+}
 function drawRestart(context, endGameAnimations) {
   resetContext(context);
   endGameAnimation(context, endGameAnimations[tick % endGameAnimations.length]);
